@@ -1,0 +1,10 @@
+[Unit]
+Description=APIservice
+After=network.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/API
+ExecStart=bash -c "npm start"
+
+[Install]
+WantedBy=multi-user.target

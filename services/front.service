@@ -1,0 +1,10 @@
+[Unit]
+Description=FrontService
+After=network.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/front
+ExecStart=bash -c "npm start"
+
+[Install]
+WantedBy=multi-user.target
