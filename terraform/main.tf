@@ -127,15 +127,3 @@ resource "local_file" "ansible_hosts" {
   )
   filename = "../inventory/hosts"
 }
-resource "null_resource" "cloud_setup" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = <<EOT
-    mkdir -p /tmp/scripts &&
-    echo "* * * * * /tmp/scripts/backup_script.sh" | crontab -
-    EOT
-  }
-}

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-backup_folder="/root/database/backup"
-backup_file="$backup_folder/$(date +'%Y-%m-%d-%H-%M-%S').sql.gz"
-#-U user db
-pg_dump -U mongoadmin Linux  | gzip > "$backup_file"
+mongodump --username mongoadmin --password secret mongodb://localhost:27017/Linux \
+ --authenticationDatabase admin  --gzip \
+-o "/root/database/backup/dump-$(date +'%Y-%m-%d-%H-%M-%S')" #&>/tmp/error.txt
+
