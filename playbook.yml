@@ -1,0 +1,179 @@
+---
+- name: Install the base configuration
+  hosts: frontend
+  remote_user: ubuntu
+  gather_facts: false
+
+  tasks:
+    
+    - name: Open a limited connection rate on ssh port (firewall)
+      become: true
+      ufw:
+        rule: limit
+        port: ssh
+        proto: tcp
+      tags:  ["all", "firewall"]
+
+    - name: Open http port (firewall)
+      become: true
+      ufw:
+        rule: allow
+        port: 3000
+        proto: tcp
+      tags:  ["all", "firewall"]
+
+    - name: Open https port (firewall)
+      become: true
+      ufw:
+        rule: allow
+        port: https
+        proto: tcp
+      tags:  ["all", "firewall"]
+
+    - name: Enable firewall using a rejecting policy
+      become: true
+      ufw:
+        state: enabled
+        policy: reject
+      tags:  ["all", "firewall"]
+
+    - name: "apt upgrade"
+      become: true
+      apt:
+        upgrade: true
+      tags:  ["all", "apt"]
+
+    - name: "Install nodejs, npm, gnupg and curl"
+      become: true
+      apt:
+        update_cache: yes
+        name: [gnupg, curl, nodejs, npm]
+        state: "latest"
+      tags:  ["all", "apt"]
+
+    - name: Copy the api folder
+      ansible.builtin.copy:
+        src: ./API
+        dest: /home/ubuntu
+        mode: 0700
+        force: false
+      tags:  ["all", "api"]
+
+    - name: install api node modules
+      ansible.builtin.shell:
+        cmd: npm install
+        chdir: /home/ubuntu/API
+      tags:  ["all", "api"]
+
+    - name: Copy the api service file
+      ansible.builtin.copy:
+        src: ./services/api.service
+        dest: $HOME/.config/systemd/user/
+        mode: 0500
+        force: true
+      tags:  ["all", "api"]
+
+    - name: Copy the front folder
+      ansible.builtin.copy:
+        src: ./front
+        dest: /home/ubuntu
+        mode: 0700
+        force: false
+      tags:  ["all", "front"]
+
+    - name: install front node modules
+      ansible.builtin.shell:
+        cmd: npm install
+        chdir: /home/ubuntu/front
+      tags:  ["all", "front"]
+
+    - name: Copy the front service file
+      ansible.builtin.copy:
+        src: ./services/front.service
+        dest: $HOME/.config/systemd/user/
+        mode: 0500
+        force: true
+      tags:  ["all", "front"]
+
+    - name: Import the public key used by the package management system for mongodb installation 
+      ansible.builtin.shell:
+        cmd: wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc |  gpg --dearmor | sudo tee /usr/share/keyrings/mongodb.gpg > /dev/null
+      tags:  ["all", "mongo"]
+
+    - name: Tell to apt where to find mongodb-org repo securely
+      ansible.builtin.shell:
+        cmd: echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+      tags:  ["all", "mongo"]
+
+    - name: "Install mongodb-org"
+      become: true
+      apt:
+        update_cache: yes
+        name: mongodb-org
+        state: present
+      tags:  ["all", "mongo"]
+
+    - name: Start mongod service unit
+      become: true
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+        state: started
+        name: mongod
+        scope: "system"
+      tags:  ["all", "mongo", "service"]
+
+    - name: Waits for db port up
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 27017
+      tags:  ["all", "mongo", "service"]
+    
+    - name: Add db user and define role
+      ansible.builtin.shell:
+        cmd: mongosh localhost:27017/admin --eval "db.createUser({user:'mongoadmin',pwd:'secret',roles:[{role:'readWrite',db:'Linux'}]});"
+      tags:  ["all", "mongo", "mongouser"]
+
+    - name: Start api service unit
+      ansible.builtin.systemd_service:
+        state: started
+        name: api
+        scope: "user"
+      tags:  ["all", "service"]
+
+    - name: Start front service unit
+      ansible.builtin.systemd_service:
+        state: started
+        name: front
+        scope: "user"
+      tags:  ["all", "service"]
+
+    - name: Copy backup script
+      ansible.builtin.copy:
+        src: ./services/backup_script.sh
+        dest: /tmp/backup_script.sh
+        mode: 0755
+      tags:  ["all", "service"]
+
+    - name: Creates directory for backup file
+      become: true
+      ansible.builtin.file:
+        path: /root/database/backup
+        state: directory
+      tags: [ "all", "service" ]
+
+    - name: Update MOTD
+      become: true
+      ansible.builtin.shell:
+        cmd:  if [[ $(df -hP / | awk 'NR==2 {print $5}' | tr -d '%') -gt 80 ]]; then echo "ATTENTION USAGE DISK SUP 80%"; else echo "Bonjour, usage du disque dur normal"; fi  > /etc/motd
+      tags: [ "all", "service" ]
+
+    - name: CRON on backup script
+      become: true
+      ansible.builtin.cron:
+        day: "15"
+        hour: "2"
+        minute: "35"
+        name: "backup script"
+        job: "/tmp/backup_script.sh"
+        user: root
+      tags: [ "all", "service" ]
