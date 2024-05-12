@@ -130,7 +130,7 @@ resource "local_file" "ansible_hosts" {
 
 
 # Ansible vars templating
-resource "local_file" "cloud-init" {
+resource "local_file" "ansible-var" {
   content = templatefile(
     "frontend.yml.tftpl",
     {
