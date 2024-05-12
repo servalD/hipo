@@ -1,5 +1,6 @@
 SESSION:
   USER: "webadmin"
+  IP: "${}"
 MONGO:
   PORT: "27017"
   IP: "127.0.0.1"

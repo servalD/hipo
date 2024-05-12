@@ -127,3 +127,15 @@ resource "local_file" "ansible_hosts" {
   )
   filename = "../inventory/hosts"
 }
+
+
+# Ansible vars templating
+resource "local_file" "cloud-init" {
+  content = templatefile(
+    "frontend.yml.tftpl",
+    {
+      pub_key = tls_private_key.ssh.public_key_openssh
+    }
+  )
+  filename = "inventory/group_vars.frontend.yml"
+}
