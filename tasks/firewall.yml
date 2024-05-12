@@ -1,0 +1,39 @@
+
+- name: Open a limited connection rate on ssh port (firewall)
+  become: true
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+  tags:  ["all", "firewall"]
+
+- name: Open http port (firewall)
+  become: true
+  ufw:
+    rule: allow
+    port: 3000
+    proto: tcp
+  tags:  ["all", "firewall"]
+
+- name: Open API port (firewall)
+  become: true
+  ufw:
+    rule: allow
+    port: 3001
+    proto: tcp
+  tags: [ "all", "firewall" ]
+
+- name: Open https port (firewall)
+  become: true
+  ufw:
+    rule: allow
+    port: https
+    proto: tcp
+  tags:  ["all", "firewall"]
+
+- name: Enable firewall using a rejecting policy
+  become: true
+  ufw:
+    state: enabled
+    policy: reject
+  tags:  ["all", "firewall"]

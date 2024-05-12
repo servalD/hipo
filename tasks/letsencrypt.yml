@@ -1,0 +1,6 @@
+
+- name: Install certbot
+  become: true
+  ansible.builtin.shell:
+    cmd: snap install --classic certbot
+  tags:  ["all", "snap"]

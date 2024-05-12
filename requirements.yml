@@ -1,0 +1,5 @@
+collections:
+  - name: community.mongodb
+    version: 1.7.3
+  - name: community.general
+    version: 8.6.0

@@ -4,13 +4,13 @@ terraform {
       source  = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
-    tls = {
-      source  = "hashicorp/tls"
-      version = "4.0.5"
-    }
     multipass = {
       source  = "larstobi/multipass"
       version = "1.4.2"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.0.5"
     }
   }
 }
@@ -64,7 +64,7 @@ resource "digitalocean_droplet" "ubuntu-droplet" {
   # Specifies the name of the droplet
   name   = "frontend"
   # Specifies the size of the VM
-  size   = "s-1vcpu-1gb"
+  size   = "s-2vcpu-4gb"
   # Specifies the image to use for the VM (Ubuntu here)
   image  = "ubuntu-23-10-x64"
   # Specifies the region where the droplet will be created
@@ -126,4 +126,16 @@ resource "local_file" "ansible_hosts" {
     }
   )
   filename = "../inventory/hosts"
+}
+
+
+# Ansible vars templating
+resource "local_file" "cloud-init" {
+  content = templatefile(
+    "frontend.yml.tftpl",
+    {
+      VM_IP = "${var.CLOUD ? data.digitalocean_droplet.frontend_info[0].ipv4_address : data.multipass_instance.frontend_info[0].ipv4}"
+    }
+  )
+  filename = "inventory/group_vars.frontend.yml"
 }
