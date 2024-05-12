@@ -38,4 +38,5 @@
         state: started
         name: "{{ service_name }}"
         scope: "user"
+        force: true
       tags:  ["all", "node_server", "service"]

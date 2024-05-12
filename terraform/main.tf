@@ -118,11 +118,11 @@ output "frontend_ip" {
 }
 
 # Ansible hosts templating
-resource "local_file" "ansible_hosts" {
+resource "local_file" "ansible-var" {
   content = templatefile(
     "hosts.tftpl",
     {
-      frontend_ip = "${var.CLOUD ? data.digitalocean_droplet.frontend_info[0].ipv4_address : data.multipass_instance.frontend_info[0].ipv4}"
+      VM_IP = "${var.CLOUD ? data.digitalocean_droplet.frontend_info[0].ipv4_address : data.multipass_instance.frontend_info[0].ipv4}"
     }
   )
   filename = "../inventory/hosts"
