@@ -4,10 +4,11 @@ import Select from 'react-select';
 import axios from "axios";
 import { ICompanyFleet, IVehicle, TableCoProps } from "../utils/types";
 import {Radio} from "@mui/material";
+import { config } from "dotenv";
 
 const getVehicle = async (): Promise<IVehicle[]> => {
     try {
-        const response = await axios.get<IVehicle[]>('http://localhost:3001/vehicle/get');
+        const response = await axios.get<IVehicle[]>(`http://${process.env.REACT_APP_IP}:3001/vehicle/get`);
         return response.data;
     } catch (error) {
         console.error('Erreur lors de la récupération des données :', error);
@@ -33,7 +34,7 @@ const addCompany = async () => {
             }
             console.log(IVehicle);
             const instance: ICompanyFleet = {name, IVehicle};
-            const response = await axios.post<ICompanyFleet[]>('http://localhost:3001/company/add', instance);
+            const response = await axios.post<ICompanyFleet[]>(`http://${process.env.REACT_APP_IP}:3001/company/add`, instance);
         }
     } catch (error) {
         console.error('Erreur lors de la récupération des données :', error);
@@ -43,7 +44,7 @@ const addCompany = async () => {
 const addVehicle = async (model: string, brand: string, cost: number) => {
     try {
         const instance: IVehicle = { model, brand, cost};
-        const response = await axios.post<IVehicle>('http://localhost:3001/vehicle/add', instance);
+        const response = await axios.post<IVehicle>(`http://${process.env.REACT_APP_IP}:3001/vehicle/add`, instance);
     } catch (error) {
         console.error('Erreur lors de la récupération des données :', error);
     }

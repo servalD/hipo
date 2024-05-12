@@ -11,17 +11,18 @@ import {
 import { Button } from '@chakra-ui/react'
 import { TableCoProps, ICompanyFleet, IVehicle } from "../utils/types";
 import axios from 'axios';
+import { config } from "dotenv";
 
 const deleteItem = async (type: String, id: string | null) => {
     try {
-        await axios.delete(`http://localhost:3001/${type}/delete/${id}`);
+        await axios.delete(`http://${process.env.REACT_APP_IP}host:3001/${type}/delete/${id}`);
     } catch (error) {
         console.error('Erreur lors de la suppression des données :', error);
     }
 }
 const hydrateItem = async (id: string) => {
     try {
-        const response = await axios.get<IVehicle[]>('http://localhost:3001/vehicle/getById/'+ id);
+        const response = await axios.get<IVehicle[]>(`http://${process.env.REACT_APP_IP}:3001/vehicle/getById/`+ id);
         const data = response.data;
 
         if (data) {
@@ -45,7 +46,7 @@ const hydrateItem = async (id: string) => {
 
 const hydrateItemCom = async (id: string) => {
     try {
-        const response = await axios.get<ICompanyFleet[]>('http://localhost:3001/company/getById/'+ id);
+        const response = await axios.get<ICompanyFleet[]>(`http://${process.env.REACT_APP_IP}:3001/company/getById/`+ id);
         const data = response.data;
         if (data) {
             const Company:any = data;
@@ -69,7 +70,7 @@ function TableCo(props: TableCoProps) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get<ICompanyFleet[] | IVehicle[]>(`http://localhost:3001/${props.type}/get`);
+                const response = await axios.get<ICompanyFleet[] | IVehicle[]>(`http://${process.env.REACT_APP_IP}:3001/${props.type}/get`);
                 setData(response.data);
             } catch (error) {
                 console.error('Erreur lors de la récupération des données :', error);

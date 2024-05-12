@@ -5,12 +5,11 @@ import { ICompanyFleet, IVehicle, TableCoProps } from "../utils/types";
 
 
 
-
 const updateVehicule = async (model: string, brand: string, cost: number, id: string) => {
     try {
         console.log(model);
         const instance: IVehicle = { model, brand, cost};
-        await axios.put<IVehicle>(`http://localhost:3001/vehicle/update/${id}`, instance);
+        await axios.put<IVehicle>(`http://${process.env.REACT_APP_IP}:3001/vehicle/update/${id}`, instance);
     } catch (error) {
         console.error('Erreur lors de la récupération des données :', error);
     }
@@ -21,10 +20,10 @@ const updateCompany = async () => {
         const idInput = document.querySelector<HTMLInputElement>('.id_up');
         const companyInput = document.querySelector<HTMLInputElement>('.company_name');
         if (idInput && companyInput){
-            const response = await axios.get<ICompanyFleet>('http://localhost:3001/company/getById/'+ idInput.value);
+            const response = await axios.get<ICompanyFleet>(`http://${process.env.REACT_APP_IP}:3001/company/getById/`+ idInput.value);
             const company: ICompanyFleet = response.data;
             company.name = companyInput.value;
-            await axios.put<ICompanyFleet>(`http://localhost:3001/company/update/${idInput.value}`, company);
+            await axios.put<ICompanyFleet>(`http://${process.env.REACT_APP_IP}:3001/company/update/${idInput.value}`, company);
         }
     } catch (error) {
         console.error('Erreur lors de la récupération des données :', error);
