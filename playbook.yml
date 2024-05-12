@@ -22,6 +22,14 @@
         proto: tcp
       tags:  ["all", "firewall"]
 
+    - name: Open API port (firewall)
+      become: true
+      ufw:
+        rule: allow
+        port: 3001
+        proto: tcp
+      tags: [ "all", "firewall" ]
+
     - name: Open https port (firewall)
       become: true
       ufw:
@@ -56,7 +64,7 @@
         src: ./API
         dest: /home/ubuntu
         mode: 0700
-        force: false
+        force: true
       tags:  ["all", "api"]
 
     - name: install api node modules
@@ -78,7 +86,7 @@
         src: ./front
         dest: /home/ubuntu
         mode: 0700
-        force: false
+        force: true
       tags:  ["all", "front"]
 
     - name: install front node modules

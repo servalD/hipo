@@ -3,8 +3,10 @@ import Navbar from "./component/Navbar";
 import TableCo from "./component/Table";
 import Form from "./component/Form";
 import Form_up from "./component/Form_up";
+import { config } from "dotenv";
 
 function App() {
+
 let url = document.documentURI.split("/")[3];
   return (
     <div className="App">

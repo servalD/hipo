@@ -8,10 +8,9 @@ import {VehicleController, CompanyController} from "./contro";
 
 async function launchAPI() {
     const db = await MongooseUtils.open();
-    const allowedOrigins = ['http://localhost:3000', 'localhost:3000', 'localhost', '*'];
 
     const options: cors.CorsOptions = {
-        origin: allowedOrigins
+        origin: '*'
     };
 
     const registry = new ModelRegistry(db);
