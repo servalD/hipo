@@ -15,7 +15,7 @@ import { config } from "dotenv";
 
 const deleteItem = async (type: String, id: string | null) => {
     try {
-        await axios.delete(`http://${process.env.REACT_APP_IP}host:3001/${type}/delete/${id}`);
+        await axios.delete(`http://${process.env.REACT_APP_IP}:3001/${type}/delete/${id}`);
     } catch (error) {
         console.error('Erreur lors de la suppression des données :', error);
     }
