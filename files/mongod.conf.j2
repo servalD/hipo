@@ -1,0 +1,19 @@
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongodb
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+# network interfaces
+net:
+  port: {{ MONGO.PORT }}
+  bindIp: {{ MONGO.IP }}
+
+
+# how the process runs
+processManagement:
+  timeZoneInfo: /usr/share/zoneinfo

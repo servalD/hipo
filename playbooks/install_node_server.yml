@@ -1,0 +1,41 @@
+- name: Install and start {{ service_name }} node server
+  hosts: frontend
+  remote_user: "{{ user }}"
+
+  tasks:
+
+    - name: Copy {{ service_name }} node folder
+      ansible.builtin.copy:
+        src: "../{{ folder }}"
+        dest: "$HOME"
+        mode: 0700
+        force: false
+      tags:  ["all", "node_server"]
+
+    - name: Copy {{ service_name }} service file
+      ansible.builtin.copy:
+        src: "../services/{{ service_name }}.service"
+        dest: "$HOME/.config/systemd/user/"
+        mode: 0500
+        force: true
+      tags:  ["all", "node_server"]
+
+    - name: Templating {{ service_name }} .env file
+      ansible.builtin.template:
+        src: "../files/.env.{{ service_name }}.j2"
+        dest: "./{{ folder }}/.env"
+        mode: 0600
+        force: true
+      
+    - name: install {{ service_name }} node modules
+      ansible.builtin.shell:
+        cmd: npm install
+        chdir: "$HOME/{{ folder }}"
+      tags:  ["all", "node_server"]
+
+    - name: Start {{ service_name }} service unit
+      ansible.builtin.systemd_service:
+        state: started
+        name: "{{ service_name }}"
+        scope: "user"
+      tags:  ["all", "node_server", "service"]

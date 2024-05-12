@@ -7,7 +7,7 @@ export class MongooseUtils {
                 username: process.env.MONGODB_USR,
                 password: process.env.MONGODB_PW
             },
-            authSource: 'admin'
+            authSource: 'Linux'
         });
     }
 }

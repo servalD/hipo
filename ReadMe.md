@@ -33,3 +33,9 @@ This server is supposed to be secure (proper user permissions and fw deployed) a
    ```shell
    ansible-playbook -i inventory playbook.yml
    ```
+
+## Creating a new password for root user
+
+```shell
+mkpasswd --method=SHA-512 --rounds=4096
+```

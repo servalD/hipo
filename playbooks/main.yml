@@ -1,0 +1,43 @@
+---
+- name: Install the base configuration
+  hosts: frontend
+  remote_user: ubuntu
+
+  tasks:
+
+    - name: "apt upgrade"
+      become: true
+      apt:
+        upgrade: true
+      tags:  ["all", "apt"]
+
+    - name: "Install nodejs, npm, gnupg, curl and pip"
+      become: true
+      apt:
+        update_cache: yes
+        name: [gnupg, curl, nodejs, npm, python3-pip]
+        state: "latest"
+      tags:  ["all", "apt"]
+
+    - include_tasks: ../tasks/firewall.yml
+      
+    - include_tasks: ../tasks/letsencrypt.yml
+
+- name: Install and start mongodb
+  ansible.builtin.import_playbook: install_mongodb.yml
+  tags: ["mongodb"]
+
+- name: Install and start the API server
+  ansible.builtin.import_playbook: install_node_server.yml
+  vars:
+    user: "{{ SESSION.USER }}"
+    folder: API
+    service_name: api
+  tags: ["api"]
+
+- name: Install and start the front server
+  ansible.builtin.import_playbook: install_node_server.yml
+  vars:
+    user: "{{ SESSION.USER }}"
+    folder: front
+    service_name: front

@@ -1,14 +1,19 @@
 #cloud-config
 users:
-  - default
   - name: ubuntu
-    gecos: Ubuntu
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    groups: users, admin
-    shell: /bin/bash
-    ssh_import_id: None
-    lock_passwd: true
     ssh_authorized_keys:
       - ${ pub_key }
+    groups: users, admin
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+
+  - name: webadmin
+    gecos: "Web site"
+    ssh_authorized_keys:
+      - ${ pub_key }
+    sudo: false
+    groups: users
+    shell: /bin/bash
+
 package_update: true
-# package_upgrade: true
+# package_upgrade: true# too long

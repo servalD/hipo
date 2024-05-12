@@ -1,9 +1,10 @@
+SESSION:
+  USER: "webadmin"
 MONGO:
   PORT: "27017"
   IP: "127.0.0.1"
   DB_NAME: "Linux"
-  URL: "mongodb://{{ MONGO.IP }}:{{ MONGO.PORT }}/{{ MONGO.DB_NAME }}"
-  USER: "apiuser"
+  USER: "{{ SESSION.USER }}"
   PASSWORD: "secret"
 
 API:
