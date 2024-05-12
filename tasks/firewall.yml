@@ -15,6 +15,14 @@
     proto: tcp
   tags:  ["all", "firewall"]
 
+- name: Open API port (firewall)
+  become: true
+  ufw:
+    rule: allow
+    port: 3001
+    proto: tcp
+  tags: [ "all", "firewall" ]
+
 - name: Open https port (firewall)
   become: true
   ufw:

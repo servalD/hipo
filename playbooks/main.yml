@@ -5,6 +5,12 @@
 
   tasks:
 
+    - name: Update MOTD
+      become: true
+      ansible.builtin.shell:
+        cmd:  if [[ $(df -hP / | awk 'NR==2 {print $5}' | tr -d '%') -gt 80 ]]; then echo "ATTENTION USAGE DISK SUP 80%"; else echo "Bonjour, usage du disque dur normal"; fi  > /etc/motd
+      tags: [ "all", "service" ]
+      
     - name: "apt upgrade"
       become: true
       apt:
