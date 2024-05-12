@@ -39,5 +39,5 @@ This server is supposed to be secure (proper user permissions and fw deployed) a
 
 4. ### Run Ansible playbook to deploy the web app, api and install requirements
    ```shell
-   ansible-playbook -i inventory playbooks/main.yml
+   ansible-playbook -i ./inventory playbooks/main.yml
    ```
